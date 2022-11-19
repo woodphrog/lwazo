@@ -31,6 +31,18 @@ object SmsManager {
         return sms
     }
 
+    fun replyToSms(smsEntry: SmsEntry, message: String) {
+        val conversation = smsConversations.getOrPut(smsEntry.sender!!) { SmsConversation(smsEntry.sender) }
+        val reply = SmsEntry(
+            sender = PhoneNumberManager.myPhoneNumber,
+            receiver = smsEntry.sender,
+            message = message,
+            quoted = smsEntry
+        )
+        conversation.addSmsEntry(reply)
+        sendSms(reply)
+    }
+
     private fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
         val segments = transmissionFormat.split(SEPARATOR)
         val messageBody = segments[0].trim()

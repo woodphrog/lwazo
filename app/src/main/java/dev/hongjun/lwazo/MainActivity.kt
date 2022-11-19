@@ -16,6 +16,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
+import dev.hongjun.lwazo.SmsManager.replyToSms
+import dev.hongjun.lwazo.SmsManager.sendSms
 import dev.hongjun.lwazo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -118,6 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSmsReceived(smsEntry: SmsEntry) {
-
+        Log.d("SmsReceived", smsEntry.toTransmissionFormat())
+        replyToSms(smsEntry, "Thank you for your message!")
     }
 }
