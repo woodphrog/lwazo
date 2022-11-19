@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
 
+const val SEPARATOR = "----------------------------------"
 
 val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy à HH:mm:ss.SSSSS", Locale.FRENCH)
 
@@ -23,7 +24,7 @@ data class SmsEntry(
 ) {
     private fun toQuote(): String {
         return """
-----------------------------------
+$SEPARATOR
 Le ${dateFormat.format(timestamp)}, $sender a envoyé $id
         """.trimIndent().trimMargin()
     }
@@ -32,24 +33,18 @@ Le ${dateFormat.format(timestamp)}, $sender a envoyé $id
         return if (quoted == null) {
             """
 $message
-----------------------------------
+$SEPARATOR
 $id
             """.trimIndent().trimMargin()
         } else {
             """
 $message
-----------------------------------
+$SEPARATOR
 $id
 ${quoted.toQuote()}
             """.trimIndent().trimMargin()
         }
     }
-}
-
-fun sendSms(smsEntry: SmsEntry) {
-    val smgr: SmsManager = SmsManager.getDefault()
-    val parts = smgr.divideMessage(smsEntry.toTransmissionFormat())
-    smgr.sendMultipartTextMessage(smsEntry.receiver, null, parts, null, null)
 }
 
 fun readSms() {

@@ -1,5 +1,6 @@
 package dev.hongjun.lwazo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.provider.Telephony.Sms
 import android.util.Log
@@ -62,7 +63,7 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
-        var l1 = MutableList<SmsEntry>(1){SmsEntry("a", "a", "bruh", LocalDateTime.now())}
+        //var l1 = MutableList<SmsEntry>(1){SmsEntry("a", "a", "bruh", LocalDateTime.now())}
 //        messageListScreenView(
 //            title = "lol",
 //            list = l1,
@@ -115,6 +116,7 @@ class FirstFragment : Fragment() {
 
     }
     }
+    //@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun messageListScreenView(
         title:String,
@@ -122,9 +124,9 @@ class FirstFragment : Fragment() {
         fabClick:()->Unit?,
         itemClick:(smsEntry:SmsEntry)->Unit
     ) {
-        Scaffold() {
-            MessagesList(list=list, itemClick = itemClick)
-        }
+//        Scaffold() {
+//            MessagesList(list=list, itemClick = itemClick)
+//        }
     }
 
     override fun onDestroyView() {
