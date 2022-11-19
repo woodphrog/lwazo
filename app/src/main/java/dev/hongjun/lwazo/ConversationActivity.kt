@@ -87,12 +87,21 @@ fun Conversation(navController: NavController, destinationNumber: String) {
         println(it)
         Column(modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState(Int.MAX_VALUE))) {
+            .verticalScroll(rememberScrollState(Int.MAX_VALUE))
+            .padding(top = 15.dp, bottom = 15.dp)
+        ) {
+            var previousMsg: SmsEntry? = null
             for (message in messages) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(8.dp),
+                        .padding(bottom =
+                            if (previousMsg != null && previousMsg.sender == message.sender) {
+                                0.dp
+                            } else {
+                                8.dp
+                            }
+                            , start = 15.dp, end = 15.dp),
                     horizontalArrangement = if (messageIsMine(message)) {
                         Arrangement.End
                     } else {
@@ -101,6 +110,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
                 ) {
                     ChatBubble(message)
                 }
+                previousMsg = message
             }
         }
     }
@@ -144,28 +154,71 @@ fun MessageInput(conversation: SmsConversation) {
 
 @Composable
 fun ChatBubble(sms: SmsEntry) {
-    Surface(
-        color = if (messageIsMine(sms)) {
-            MaterialTheme.colorScheme.primary
+    Column(
+        horizontalAlignment = if (messageIsMine(sms)) {
+            androidx.compose.ui.Alignment.End
         } else {
-            MaterialTheme.colorScheme.secondary
-        },
-        contentColor = if (messageIsMine(sms)) {
-            MaterialTheme.colorScheme.onPrimary
-        } else {
-            MaterialTheme.colorScheme.onSecondary
-        },
-        shape = MaterialTheme.shapes.medium,
-        shadowElevation = 2.dp,
+            androidx.compose.ui.Alignment.Start
+        }
     ) {
-        Text(
-            text = sms.message,
-            modifier = Modifier.padding(8.dp),
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Normal,
-                fontWeight = FontWeight.Normal
+        if (sms.quoted != null) {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = if (messageIsMine(sms)) {
+                    "Vous avez répondu"
+                } else {
+                    "Vous a répondu"
+                },
+                style = TextStyle(
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 11.sp
+                ),
+                textAlign = TextAlign.Right
             )
-        )
+        }
+        Surface(
+            color = if (messageIsMine(sms)) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.secondary
+            },
+            contentColor = if (messageIsMine(sms)) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSecondary
+            },
+            shape = MaterialTheme.shapes.extraLarge,
+            shadowElevation = 3.dp,
+        ) {
+            Text(
+                text = sms.message,
+                modifier = Modifier.padding(8.dp),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Normal
+                )
+            )
+        }
+        if (sms.quoted != null) {
+            val quoted = sms.quoted
+            Surface(
+                color = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary,
+                shape = MaterialTheme.shapes.extraLarge,
+                shadowElevation = 3.dp,
+            ) {
+                Text(
+                    text = quoted.message,
+                    modifier = Modifier.padding(8.dp),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
+        }
     }
 }
