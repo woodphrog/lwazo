@@ -33,8 +33,10 @@ class SmsReceiver : BroadcastReceiver() {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
-                val smsEntry = SmsEntry(sender, null, message, Instant.now())
+                val smsEntry = SmsEntry(sender, null, message)
                 Log.d(null, smsEntry.toQuote())
+                val newSmsEntry = SmsEntry(null, sender, "Hey Hello Salut", quoted = smsEntry)
+                sendSms(newSmsEntry)
             }
         }
     }

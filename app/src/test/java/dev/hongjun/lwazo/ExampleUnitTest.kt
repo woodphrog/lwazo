@@ -11,7 +11,30 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun testSmsEntry() {
+        val sms1= SmsEntry(
+            sender = "Alice",
+            receiver = "Bob",
+            message = "Salut Bob !"
+        )
+        val sms2 = SmsEntry(
+            sender = "Bob",
+            receiver = "Alice",
+            message = "Salut Alice !",
+            quoted = sms1
+        )
+        val sms3 = SmsEntry(
+            sender = "Alice",
+            receiver = "Bob",
+            message = "Ça va bien ?",
+            quoted = sms2
+        )
+        val sms4 = SmsEntry(
+            sender = "Bob",
+            receiver = "Alice",
+            message = "Ça va bien, merci !",
+            quoted = sms3
+        )
+        println(sms4.toFullText())
     }
 }
