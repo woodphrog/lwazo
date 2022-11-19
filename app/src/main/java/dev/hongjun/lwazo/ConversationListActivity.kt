@@ -1,6 +1,5 @@
 package dev.hongjun.lwazo
 
-import android.graphics.fonts.FontStyle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dev.hongjun.lwazo.ui.theme.LoiseauBleuTheme
 
 class ConversationListActivity : ComponentActivity() {
@@ -30,8 +34,16 @@ class ConversationListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //Greeting("Android")
-                    messagesListTopBar(title = "Messages")
+                    val navController = rememberNavController()
+
+                    NavHost(navController = navController, startDestination = "conversation_list") {
+                        composable("conversation_list") {
+                            MessagesListTopBar(navController, title = "Messages")
+                        }
+                        composable("conversation/{destinationNumber}") {
+
+                        }
+                    }
                 }
             }
         }
@@ -39,14 +51,7 @@ class ConversationListActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-@Composable
-fun messagesListTopBar(title : String){
+fun MessagesListTopBar(navController: NavController, title : String) {
     Row(){
     TopAppBar(
         title = {
@@ -63,12 +68,5 @@ fun messagesListTopBar(title : String){
 
         backgroundColor = Color.White
     )
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LoiseauBleuTheme {
-        Greeting("Android")
     }
 }

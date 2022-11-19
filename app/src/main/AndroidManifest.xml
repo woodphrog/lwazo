@@ -5,6 +5,7 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="true" />
+
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -22,6 +23,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoiseauBleu"
         tools:targetApi="31">
+        <activity
+            android:name=".ConversationActivity"
+            android:exported="false"
+            android:label="@string/title_activity_conversation"
+            android:theme="@style/Theme.LoiseauBleu" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
