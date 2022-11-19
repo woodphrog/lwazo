@@ -3,10 +3,8 @@ package dev.hongjun.lwazo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -57,28 +55,21 @@ class ConversationListActivity : ComponentActivity() {
 
 @Composable
 fun MessagesListTopBar(navController: NavController, title : String) {
-    Column {
-        TopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle(1),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                )
-            },
-            backgroundColor = Color.White
-        )
-        Button(onClick = {
-            navController.navigate("conversation/911")
-        }) {
+    Row(){
+    TopAppBar(
+        title = {
             Text(
-                "Open convo with 911"
+                text = title,
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle(1),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
             )
-        }
-    }
+        },
 
+        backgroundColor = Color.White
+    )
+    }
 }
