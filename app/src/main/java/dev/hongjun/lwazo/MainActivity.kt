@@ -1,6 +1,10 @@
 package dev.hongjun.lwazo
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.telephony.SubscriptionManager
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +15,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
 import dev.hongjun.lwazo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +41,48 @@ class MainActivity : AppCompatActivity() {
                 .setAnchorView(R.id.fab)
                 .setAction("Action", null).show()
         }
+        ensurePermissions()
+        initSmsFunctionalities()
+    }
 
+    private fun permissionNotGranted(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) !=
+                PackageManager.PERMISSION_GRANTED
+    }
+
+    private var requestCode = 1;
+
+    private fun askPermissions() {
+        ActivityCompat.requestPermissions(this, arrayOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.READ_PHONE_NUMBERS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.RECEIVE_SMS
+        ), requestCode++)
+    }
+
+    private fun ensurePermissions() {
+        while (permissionNotGranted()) {
+            askPermissions()
+            Thread.sleep(1000)
+        }
+    }
+
+    private fun initSmsFunctionalities() {
+
+        val subscriptionManager = getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as
+                SubscriptionManager
+        PhoneNumberManager.myPhoneNumber = subscriptionManager.getPhoneNumber(1)
+        Log.d("PhoneNumber", PhoneNumberManager.myPhoneNumber)
         SmsReceptionManager.addSmsReceptionListener(onSmsReceivedRef)
     }
 

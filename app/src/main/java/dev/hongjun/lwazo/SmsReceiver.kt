@@ -4,9 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
-import android.util.Log
-import android.widget.Toast
-import java.time.Instant
 
 object SmsReceptionManager {
     private val smsReceptionListeners = mutableListOf<(SmsEntry) -> Unit>()
@@ -19,9 +16,9 @@ object SmsReceptionManager {
         smsReceptionListeners.remove(listener)
     }
 
-    fun onReceive(transmissionFormat: String) {
-        //Log.d("SmsReceptionManager", "onReceive: ${smsEntry.toTransmissionFormat()}")
-        //smsReceptionListeners.forEach { it(smsEntry) }
+    fun onReceive(transmissionFormat: String, sender: String) {
+        val sms = SmsManager.receiveSmsWithTransmissionFormat(transmissionFormat, sender)
+        smsReceptionListeners.forEach { it(sms) }
     }
 }
 
@@ -50,7 +47,7 @@ class SmsReceiver : BroadcastReceiver() {
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
                 //val smsEntry = SmsEntry(sender, null, message)
-                SmsReceptionManager.onReceive(message)
+                SmsReceptionManager.onReceive(message, sender)
             }
         }
     }
