@@ -1,6 +1,8 @@
 package dev.hongjun.lwazo
 
 import android.telephony.SmsManager
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import java.util.UUID
 
 class SmsConversation(val with: String) {
@@ -8,14 +10,25 @@ class SmsConversation(val with: String) {
     private val smsEntriesSorted = sortedSetOf(
         compareBy<SmsEntry> { it.timestamp }.thenBy { it.id }
     )
+    private var mutableStateList: SnapshotStateList<SmsEntry>? = null
 
     fun addSmsEntry(smsEntry: SmsEntry) {
         smsEntries[smsEntry.id] = smsEntry
         smsEntriesSorted.add(smsEntry)
+        mutableStateList?.add(smsEntry)
     }
 
     fun lookupSmsEntry(id: UUID): SmsEntry? {
         return smsEntries[id]
+    }
+
+    fun registerMutableStateList(list: SnapshotStateList<SmsEntry>): SnapshotStateList<SmsEntry> {
+        mutableStateList = list
+        return list
+    }
+
+    fun getSmsEntries(): List<SmsEntry> {
+        return smsEntriesSorted.toList()
     }
 }
 
