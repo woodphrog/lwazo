@@ -1,6 +1,8 @@
 package dev.hongjun.lwazo
 
+import android.app.Activity
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.scrollable
@@ -19,6 +21,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -49,6 +53,8 @@ import dev.hongjun.lwazo.ui.theme.LoiseauBleuTheme
 
 @Composable
 fun Conversation(navController: NavController, destinationNumber: String) {
+    val activity = LocalContext.current as Activity
+    activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     val conversation = SmsManager.getOrCreateConversation(destinationNumber)
     val messages = conversation.registerMutableStateList(remember {
         conversation.getSmsEntries().toMutableStateList()
@@ -131,18 +137,44 @@ fun MessageInput(conversation: SmsConversation) {
         inputValue = ""
     }
 
-    Row {
+    Row(
+        Modifier.padding(start = 15.dp, end = 15.dp)
+    ) {
         TextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 5.dp),
             value = inputValue,
             onValueChange = { inputValue = it },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions { sendMessage() },
+            textStyle = TextStyle(
+                fontSize = 16.sp,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Normal
+            ),
+            shape = MaterialTheme.shapes.extraLarge,
+            placeholder = {
+                Text(
+                    text = "Message texte",
+                    style = TextStyle(
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 16.sp
+                    )
+                )
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+
         )
         Button(
             modifier = Modifier.height(56.dp),
             onClick = { sendMessage() },
             enabled = inputValue.isNotBlank(),
+            shape = MaterialTheme.shapes.extraLarge
         ) {
             Icon(
                 imageVector = Icons.Default.Send,
