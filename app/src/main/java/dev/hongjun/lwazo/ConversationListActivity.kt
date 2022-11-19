@@ -41,7 +41,10 @@ class ConversationListActivity : ComponentActivity() {
                             MessagesListTopBar(navController, title = "Messages")
                         }
                         composable("conversation/{destinationNumber}") {
-
+                            val destinationNumber = it.arguments?.getString("destinationNumber")
+                            if (destinationNumber != null) {
+                                Conversation(navController, destinationNumber)
+                            }
                         }
                     }
                 }
