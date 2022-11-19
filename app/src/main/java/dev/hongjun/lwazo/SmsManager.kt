@@ -10,7 +10,7 @@ class SmsConversation(val with: String) {
         smsEntries[smsEntry.id] = smsEntry
     }
 
-    private fun lookupSmsEntry(id: UUID): SmsEntry? {
+    fun lookupSmsEntry(id: UUID): SmsEntry? {
         return smsEntries[id]
     }
 }
@@ -25,13 +25,25 @@ object SmsManager {
     }
 
     fun receiveSmsWithTransmissionFormat(transmissionFormat: String, sender: String): SmsEntry {
-        return parseSms(transmissionFormat)
+        val sms = parseSms(transmissionFormat, sender)
+        val conversation = smsConversations.getOrPut(sms.sender!!) { SmsConversation(sms.sender) }
+        conversation.addSmsEntry(sms)
+        return sms
     }
 
-    private fun parseSms(transmissionFormat: String): SmsEntry {
+    private fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
         val segments = transmissionFormat.split(SEPARATOR)
         val messageBody = segments[0].trim()
         val id = UUID.fromString(segments[1].trim())
-        return SmsEntry(null, null, transmissionFormat)
+        val quoted = if (segments.size > 2) {
+            val quotedSegment = segments[2]
+            val quotedSegments = quotedSegment.split("a envoyé")
+            val quotedId = UUID.fromString(quotedSegments[1].trim())
+            val conversation = smsConversations.getOrPut(sender) { SmsConversation(sender) }
+            conversation.lookupSmsEntry(quotedId)
+        } else {
+            null
+        }
+        return SmsEntry(sender, PhoneNumberManager.myPhoneNumber, messageBody, id = id, quoted = quoted)
     }
 }

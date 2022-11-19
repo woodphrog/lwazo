@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
+import java.util.UUID
 
 object SmsReceptionManager {
     private val smsReceptionListeners = mutableListOf<(SmsEntry) -> Unit>()
@@ -47,7 +48,18 @@ class SmsReceiver : BroadcastReceiver() {
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
                 //val smsEntry = SmsEntry(sender, null, message)
-                SmsReceptionManager.onReceive(message, sender)
+                if (message.contains(SEPARATOR)) {
+                    // enhanced sms
+                    SmsReceptionManager.onReceive(message, sender)
+                } else {
+                    // normal sms
+                    val messageWithId = """
+$message
+$SEPARATOR
+${UUID.randomUUID()}
+                    """.trimIndent().trimMargin()
+                    SmsReceptionManager.onReceive(messageWithId, sender)
+                }
             }
         }
     }
