@@ -35,6 +35,6 @@ class ExampleUnitTest {
             message = "Ça va bien, merci !",
             quoted = sms3
         )
-        println(sms4.toFullText())
+        println(sms4.toTransmissionFormat())
     }
 }

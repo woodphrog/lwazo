@@ -8,6 +8,22 @@ import android.util.Log
 import android.widget.Toast
 import java.time.Instant
 
+object SmsReceptionManager {
+    private val smsReceptionListeners = mutableListOf<(SmsEntry) -> Unit>()
+
+    fun addSmsReceptionListener(listener: (SmsEntry) -> Unit) {
+        smsReceptionListeners.add(listener)
+    }
+
+    fun removeSmsReceptionListener(listener: (SmsEntry) -> Unit) {
+        smsReceptionListeners.remove(listener)
+    }
+
+    fun onReceive(transmissionFormat: String) {
+        //Log.d("SmsReceptionManager", "onReceive: ${smsEntry.toTransmissionFormat()}")
+        //smsReceptionListeners.forEach { it(smsEntry) }
+    }
+}
 
 class SmsReceiver : BroadcastReceiver() {
     private val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
@@ -30,13 +46,11 @@ class SmsReceiver : BroadcastReceiver() {
                 }
                 val sender: String = messages[0]!!.originatingAddress!!
                 val message = sb.toString()
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
-                val smsEntry = SmsEntry(sender, null, message)
-                Log.d(null, smsEntry.toQuote())
-                val newSmsEntry = SmsEntry(null, sender, "Hey Hello Salut", quoted = smsEntry)
-                sendSms(newSmsEntry)
+                //val smsEntry = SmsEntry(sender, null, message)
+                SmsReceptionManager.onReceive(message)
             }
         }
     }

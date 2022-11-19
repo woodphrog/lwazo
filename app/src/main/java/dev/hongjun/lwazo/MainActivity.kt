@@ -1,6 +1,7 @@
 package dev.hongjun.lwazo
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -35,6 +36,13 @@ class MainActivity : AppCompatActivity() {
                 .setAnchorView(R.id.fab)
                 .setAction("Action", null).show()
         }
+
+        SmsReceptionManager.addSmsReceptionListener(onSmsReceivedRef)
+    }
+
+    override fun onDestroy() {
+        SmsReceptionManager.removeSmsReceptionListener(onSmsReceivedRef)
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -57,5 +65,13 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    private val onSmsReceivedRef = { message: SmsEntry ->
+        onSmsReceived(message)
+    }
+
+    private fun onSmsReceived(smsEntry: SmsEntry) {
+
     }
 }
