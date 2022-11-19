@@ -5,9 +5,13 @@ import java.util.UUID
 
 class SmsConversation(val with: String) {
     private val smsEntries = mutableMapOf<UUID, SmsEntry>()
+    private val smsEntriesSorted = sortedSetOf(
+        compareBy<SmsEntry> { it.timestamp }.thenBy { it.id }
+    )
 
     fun addSmsEntry(smsEntry: SmsEntry) {
         smsEntries[smsEntry.id] = smsEntry
+        smsEntriesSorted.add(smsEntry)
     }
 
     fun lookupSmsEntry(id: UUID): SmsEntry? {
@@ -57,5 +61,9 @@ object SmsManager {
             null
         }
         return SmsEntry(sender, PhoneNumberManager.myPhoneNumber, messageBody, id = id, quoted = quoted)
+    }
+
+    fun getOrCreateConversation(with: String): SmsConversation {
+        return smsConversations.getOrPut(with) { SmsConversation(with) }
     }
 }
