@@ -50,6 +50,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import dev.hongjun.lwazo.ui.theme.LoiseauBleuTheme
+import dev.hongjun.lwazo.ui.theme.MessageTextColor
+import dev.hongjun.lwazo.ui.theme.OtherMessageColor
+import dev.hongjun.lwazo.ui.theme.QuotedMessageColor
+import dev.hongjun.lwazo.ui.theme.QuotedTextColor
+import dev.hongjun.lwazo.ui.theme.SelfMessageColor
 
 @Composable
 fun Conversation(navController: NavController, destinationNumber: String) {
@@ -195,7 +200,7 @@ fun ChatBubble(sms: SmsEntry) {
     ) {
         if (sms.quoted != null) {
             Text(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(end = 6.dp, bottom = 2.dp),
                 text = if (messageIsMine(sms)) {
                     "Vous avez répondu"
                 } else {
@@ -211,15 +216,11 @@ fun ChatBubble(sms: SmsEntry) {
         }
         Surface(
             color = if (messageIsMine(sms)) {
-                MaterialTheme.colorScheme.primary
+                SelfMessageColor
             } else {
-                MaterialTheme.colorScheme.secondary
+                OtherMessageColor
             },
-            contentColor = if (messageIsMine(sms)) {
-                MaterialTheme.colorScheme.onPrimary
-            } else {
-                MaterialTheme.colorScheme.onSecondary
-            },
+            contentColor = MessageTextColor,
             shape = MaterialTheme.shapes.extraLarge,
             shadowElevation = 3.dp,
         ) {
@@ -236,10 +237,15 @@ fun ChatBubble(sms: SmsEntry) {
         if (sms.quoted != null) {
             val quoted = sms.quoted
             Surface(
-                color = MaterialTheme.colorScheme.tertiary,
-                contentColor = MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier.padding(top = 1.dp),
+                color = if (messageIsMine(sms.quoted)) {
+                    SelfMessageColor
+                } else {
+                    OtherMessageColor
+                },
+                contentColor = QuotedTextColor,
                 shape = MaterialTheme.shapes.extraLarge,
-                shadowElevation = 3.dp,
+                shadowElevation = 1.dp,
             ) {
                 Text(
                     text = quoted.message,
