@@ -3,6 +3,7 @@ package dev.hongjun.lwazo
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.telephony.SubscriptionManager
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import dev.hongjun.lwazo.SmsManager.replyToSms
 import dev.hongjun.lwazo.SmsManager.sendSms
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -79,10 +82,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initSmsFunctionalities() {
 
         val subscriptionManager = getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as
                 SubscriptionManager
+
+        //ActivityCompat.requestPermissions(this, Array(1){Manifest.permission.READ_PHONE_NUMBERS},1 )
+
+
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_NUMBERS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ensurePermissions()
+            return
+        }
         PhoneNumberManager.myPhoneNumber = subscriptionManager.getPhoneNumber(1)
         Log.d("PhoneNumber", PhoneNumberManager.myPhoneNumber)
         SmsReceptionManager.addSmsReceptionListener(onSmsReceivedRef)
