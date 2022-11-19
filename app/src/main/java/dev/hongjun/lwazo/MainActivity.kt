@@ -2,24 +2,24 @@ package dev.hongjun.lwazo
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SubscriptionManager
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
+import com.google.android.material.snackbar.Snackbar
 import dev.hongjun.lwazo.SmsManager.replyToSms
-import dev.hongjun.lwazo.SmsManager.sendSms
 import dev.hongjun.lwazo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -48,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         }
         ensurePermissions()
         initSmsFunctionalities()
+
+        val myIntent = Intent(this, ConversationListActivity::class.java)
+        startActivity(myIntent)
     }
 
     private fun permissionNotGranted(): Boolean {
@@ -83,7 +86,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initSmsFunctionalities() {
 
         val subscriptionManager = getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as
