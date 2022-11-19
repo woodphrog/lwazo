@@ -37,4 +37,11 @@ class ExampleUnitTest {
         )
         println(sms4.toTransmissionFormat())
     }
+
+    @Test
+    fun snowflakeTest() {
+        for (i in 0..9) {
+            println(generateSnowflakeId())
+        }
+    }
 }
