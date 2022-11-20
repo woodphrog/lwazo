@@ -19,7 +19,7 @@ data class SmsEntry(
     val receiver: String?,
     val message: String,
     val timestamp: LocalDateTime = LocalDateTime.now(),
-    val quoted: SmsEntry? = null,
+    var quoted: SmsEntry? = null,
     val id: UUID = UUID.randomUUID()
 ) {
     private fun toQuote(): String {
@@ -41,7 +41,7 @@ $id
 $message
 $SEPARATOR
 $id
-${quoted.toQuote()}
+${quoted?.toQuote()}
             """.trimIndent().trimMargin()
         }
     }

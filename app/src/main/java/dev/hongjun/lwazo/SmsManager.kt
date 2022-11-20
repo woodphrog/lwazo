@@ -2,8 +2,14 @@ package dev.hongjun.lwazo
 
 import android.telephony.SmsManager
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import java.util.UUID
+
+val dummySms: SmsEntry = SmsEntry(
+    null,
+    null,
+    message = "Le message ne peut pas être chargé",
+    id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+)
 
 class SmsConversation(val with: String) {
     private val smsEntries = mutableMapOf<UUID, SmsEntry>()
@@ -29,6 +35,45 @@ class SmsConversation(val with: String) {
 
     fun getSmsEntries(): List<SmsEntry> {
         return smsEntriesSorted.toList()
+    }
+
+    fun linkMessages() {
+        smsEntries.clear()
+        mutableStateList?.clear()
+        val newSortedList = sortedSetOf(
+            compareBy<SmsEntry> { it.timestamp }.thenBy { it.id }
+        )
+        smsEntriesSorted.forEach {
+            val segments = it.message.split(SEPARATOR)
+            var sms = when (segments.size) {
+                1 -> {
+                    it
+                }
+                2 -> {
+                    try {
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()))
+                    } catch (e: IllegalArgumentException) {
+                        it
+                    }
+                }
+                else -> {
+                    val quotedSegments = segments[2].split("a envoyé")
+                    try {
+                        val quotedSms = lookupSmsEntry(UUID.fromString(quotedSegments[1].trim()))
+                            ?: throw IllegalArgumentException("Quoted SMS not found")
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = quotedSms)
+                    } catch (e: Exception) {
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = dummySms)
+                    }
+                }
+            }
+            sms = sms.copy(message = sms.message.trim())
+            smsEntries[sms.id] = sms
+            mutableStateList?.add(sms)
+            newSortedList.add(sms)
+        }
+        smsEntriesSorted.clear()
+        smsEntriesSorted.addAll(newSortedList)
     }
 }
 
@@ -60,16 +105,20 @@ object SmsManager {
         sendSms(reply)
     }
 
-    private fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
+    fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
         val segments = transmissionFormat.split(SEPARATOR)
         val messageBody = segments[0].trim()
+        if (segments.size == 1) {
+            throw IllegalArgumentException("Invalid transmission format: $transmissionFormat")
+        }
         val id = UUID.fromString(segments[1].trim())
         val quoted = if (segments.size > 2) {
             val quotedSegment = segments[2]
             val quotedSegments = quotedSegment.split("a envoyé")
             val quotedId = UUID.fromString(quotedSegments[1].trim())
             val conversation = smsConversations.getOrPut(sender) { SmsConversation(sender) }
-            conversation.lookupSmsEntry(quotedId)
+            val quotedSms = conversation.lookupSmsEntry(quotedId)
+            quotedSms ?: throw IllegalArgumentException("Invalid transmission format: $transmissionFormat")
         } else {
             null
         }
@@ -82,5 +131,9 @@ object SmsManager {
 
     fun getSenderList():MutableMap<String, SmsConversation>{
         return smsConversations
+    fun linkMessages() {
+        smsConversations.forEach {
+            it.value.linkMessages()
+        }
     }
 }

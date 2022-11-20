@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         ensurePermissions()
         initSmsFunctionalities()
 
+        loadTextMessages(context = this)
+
         val myIntent = Intent(this, ConversationListActivity::class.java)
         startActivity(myIntent)
     }
