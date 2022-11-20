@@ -1,12 +1,12 @@
 package dev.hongjun.lwazo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,39 +18,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
@@ -69,8 +61,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.hongjun.lwazo.ui.theme.LoiseauBleuTheme
-import dev.hongjun.lwazo.ui.theme.Purple80
-import dev.hongjun.lwazo.ui.theme.SelfMessageColor
 
 class ConversationListActivity : ComponentActivity() {
     var mutableContactList: SnapshotStateList<String>? = null
@@ -134,6 +124,7 @@ class ConversationListActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -155,7 +146,7 @@ class ConversationListActivity : ComponentActivity() {
                         composable("conversation_list") {
                             Scaffold(
                                 topBar = {
-                                    MessagesListTopBar(navController, title = "Messages")
+                                    MessagesListTopBar(title = "Messages")
                                 }
                             ) {
                                 println(it)
@@ -193,7 +184,24 @@ class ConversationListActivity : ComponentActivity() {
                             }
                         }
                         composable("new_message"){
-                            LabelAndPlaceHolder(navController = navController)
+
+                                Scaffold(
+                                    topBar = {
+                                        TopAppBar(
+                                            backgroundColor = Color.White,
+
+                                        ) {
+                                            MessagesListTopBar(title = "Nouveau message")
+                                        }
+
+                                    }
+                                ){
+                                    LabelAndPlaceHolder(navController = navController)
+                                }
+
+
+
+
                         }
                     }
                 }
@@ -205,11 +213,14 @@ class ConversationListActivity : ComponentActivity() {
 fun LabelAndPlaceHolder(navController: NavController) {
     var inputValue by remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.align(Alignment.TopCenter).padding(vertical = 20.dp)) {
+        Column(modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(vertical = 20.dp)) {
             Row() {
                 TextField(
                     modifier= Modifier
-                        .fillMaxWidth().padding(vertical = 5.dp),
+                        .fillMaxWidth()
+                        .padding(vertical = 5.dp),
                     value = inputValue,
                     onValueChange = {
                         inputValue = it
@@ -254,7 +265,7 @@ fun LabelAndPlaceHolder(navController: NavController) {
     }
 }
 @Composable
-fun MessagesListTopBar(navController: NavController, title: String) {
+fun MessagesListTopBar(title: String) {
     Row() {
         TopAppBar(
             title = {
