@@ -94,15 +94,28 @@ object SmsManager {
     }
 
     fun replyToSms(smsEntry: SmsEntry, message: String) {
-        val conversation = smsConversations.getOrPut(smsEntry.sender!!) { SmsConversation(smsEntry.sender) }
-        val reply = SmsEntry(
-            sender = PhoneNumberManager.myPhoneNumber,
-            receiver = smsEntry.sender,
-            message = message,
-            quoted = smsEntry
-        )
-        conversation.addSmsEntry(reply)
-        sendSms(reply)
+        // check if replying to self
+        if (smsEntry.sender == PhoneNumberManager.myPhoneNumber) {
+            val conversation = smsConversations.getOrPut(smsEntry.receiver!!) { SmsConversation(smsEntry.receiver) }
+            val reply = SmsEntry(
+                sender = PhoneNumberManager.myPhoneNumber,
+                receiver = smsEntry.receiver,
+                message = message,
+                quoted = smsEntry
+            )
+            conversation.addSmsEntry(reply)
+            sendSms(reply)
+        } else {
+            val conversation = smsConversations.getOrPut(smsEntry.sender!!) { SmsConversation(smsEntry.sender) }
+            val reply = SmsEntry(
+                sender = PhoneNumberManager.myPhoneNumber,
+                receiver = smsEntry.sender,
+                message = message,
+                quoted = smsEntry
+            )
+            conversation.addSmsEntry(reply)
+            sendSms(reply)
+        }
     }
 
     fun parseSms(transmissionFormat: String, sender: String): SmsEntry {

@@ -22,6 +22,12 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.TopAppBar
+
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -32,7 +38,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material.TextField
@@ -145,8 +153,12 @@ class ConversationListActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "conversation_list") {
                         composable("conversation_list") {
-                            Column() {
-                                MessagesListTopBar(navController, title = "Messages")
+                            Scaffold(
+                                topBar = {
+                                    MessagesListTopBar(navController, title = "Messages")
+                                }
+                            ) {
+                                println(it)
                                 ContactList(navController = navController)
 
                             }
@@ -252,9 +264,7 @@ fun MessagesListTopBar(navController: NavController, title: String) {
                     )
                 )
             },
-
-            backgroundColor = Color.White
+            backgroundColor = Color.White,
         )
-
     }
 }
