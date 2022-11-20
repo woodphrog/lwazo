@@ -132,6 +132,7 @@ object SmsManager {
     fun getSenderList():MutableMap<String, SmsConversation>{
         return smsConversations
     }
+
     fun linkMessages() {
         smsConversations.forEach {
             it.value.linkMessages()

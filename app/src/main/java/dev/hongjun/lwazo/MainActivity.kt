@@ -143,6 +143,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun onSmsReceived(smsEntry: SmsEntry) {
         Log.d("SmsReceived", smsEntry.toTransmissionFormat())
-        replyToSms(smsEntry, "Thank you for your message!")
+        //replyToSms(smsEntry, "Thank you for your message!")
     }
 }
