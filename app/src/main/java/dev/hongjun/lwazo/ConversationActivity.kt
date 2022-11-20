@@ -91,7 +91,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
                 backgroundColor = Color.White,
                 navigationIcon = if (navController.previousBackStackEntry != null) {
                     {
-                        IconButton(onClick = { navController.navigateUp() }) {
+                        IconButton(onClick = { /*navController.navigateUp()*/navController.navigate("conversation_list") }) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = "Revenir à la liste des conversations"
