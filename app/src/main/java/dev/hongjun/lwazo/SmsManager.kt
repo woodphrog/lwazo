@@ -60,9 +60,12 @@ object SmsManager {
         sendSms(reply)
     }
 
-    private fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
+    fun parseSms(transmissionFormat: String, sender: String): SmsEntry {
         val segments = transmissionFormat.split(SEPARATOR)
         val messageBody = segments[0].trim()
+        if (segments.size == 1) {
+            throw IllegalArgumentException("Invalid transmission format: $transmissionFormat")
+        }
         val id = UUID.fromString(segments[1].trim())
         val quoted = if (segments.size > 2) {
             val quotedSegment = segments[2]
