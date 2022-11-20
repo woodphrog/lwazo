@@ -79,4 +79,8 @@ object SmsManager {
     fun getOrCreateConversation(with: String): SmsConversation {
         return smsConversations.getOrPut(with) { SmsConversation(with) }
     }
+
+    fun getSenderList():MutableMap<String, SmsConversation>{
+        return smsConversations
+    }
 }
