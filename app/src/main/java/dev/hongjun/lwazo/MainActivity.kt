@@ -21,6 +21,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dev.hongjun.lwazo.SmsManager.replyToSms
 import dev.hongjun.lwazo.databinding.ActivityMainBinding
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,8 +52,18 @@ class MainActivity : AppCompatActivity() {
 
         loadTextMessages(context = this)
 
+        startActualMainActivity()
+    }
+
+    private fun startActualMainActivity() {
         val myIntent = Intent(this, ConversationListActivity::class.java)
         startActivity(myIntent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //exitProcess(0)
+        startActualMainActivity()
     }
 
     private fun permissionNotGranted(): Boolean {
