@@ -5,18 +5,24 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -52,6 +58,7 @@ import androidx.navigation.NavController
 import dev.hongjun.lwazo.ui.theme.LoiseauBleuTheme
 import dev.hongjun.lwazo.ui.theme.MessageTextColor
 import dev.hongjun.lwazo.ui.theme.OtherMessageColor
+import dev.hongjun.lwazo.ui.theme.Purple80
 import dev.hongjun.lwazo.ui.theme.QuotedMessageColor
 import dev.hongjun.lwazo.ui.theme.QuotedTextColor
 import dev.hongjun.lwazo.ui.theme.SelfMessageColor
@@ -99,20 +106,23 @@ fun Conversation(navController: NavController, destinationNumber: String) {
         Column(modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState(Int.MAX_VALUE))
-            .padding(top = 15.dp, bottom = 15.dp)
+            .padding(top = 15.dp, bottom = 70.dp)
+            //.padding(innerPadding)
+            //.navigationBarsPadding()
         ) {
             var previousMsg: SmsEntry? = null
             for (message in messages) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom =
+                        .padding(
+                            bottom =
                             if (previousMsg != null && previousMsg.sender == message.sender) {
                                 1.dp
                             } else {
                                 8.dp
-                            }
-                            , start = 15.dp, end = 15.dp),
+                            }, start = 15.dp, end = 15.dp
+                        ),
                     horizontalArrangement = if (messageIsMine(message)) {
                         Arrangement.End
                     } else {
@@ -142,49 +152,65 @@ fun MessageInput(conversation: SmsConversation) {
         inputValue = ""
     }
 
-    Row(
-        Modifier.padding(start = 15.dp, end = 15.dp)
-    ) {
-        TextField(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 5.dp),
-            value = inputValue,
-            onValueChange = { inputValue = it },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions { sendMessage() },
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Normal,
-                fontWeight = FontWeight.Normal
-            ),
-            shape = MaterialTheme.shapes.extraLarge,
-            placeholder = {
-                Text(
-                    text = "Message texte",
-                    style = TextStyle(
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 16.sp
-                    )
-                )
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            )
-
+    val translucent = Color(0xF2FFFFFF)
+    Column {
+        Box(
+            Modifier.background(translucent)
+                .fillMaxWidth().height(10.dp)
         )
-        Button(
-            modifier = Modifier.height(56.dp),
-            onClick = { sendMessage() },
-            enabled = inputValue.isNotBlank(),
-            shape = MaterialTheme.shapes.extraLarge
+        Row(
+            Modifier
+                .padding(start = 15.dp, end = 15.dp, bottom = 0.dp)
+                .background(translucent),
         ) {
-            Icon(
-                imageVector = Icons.Default.Send,
-                contentDescription = "Envoyer"
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 5.dp)
+                    .background(Color.White),
+                value = inputValue,
+                onValueChange = { inputValue = it },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions { sendMessage() },
+                textStyle = TextStyle(
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Normal
+                ),
+                shape = MaterialTheme.shapes.extraLarge,
+                placeholder = {
+                    Text(
+                        text = "Message texte",
+                        style = TextStyle(
+                            fontStyle = FontStyle.Italic,
+                            fontSize = 16.sp
+                        )
+                    )
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    backgroundColor = Color(0xFFECECEC),
+                )
+
             )
+            Button(
+                modifier = Modifier.height(56.dp),
+                onClick = { sendMessage() },
+                enabled = inputValue.isNotBlank(),
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Purple80,
+                    contentColor = Color(0xFF000000),
+                    disabledBackgroundColor = Color(0xFFECECEC),
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Envoyer"
+                )
+            }
         }
     }
 }
