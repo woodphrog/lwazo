@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -52,7 +54,7 @@ class ConversationListActivity : ComponentActivity() {
         })
         contacts.clear()
         contacts.addAll(SmsManager.getSenderList().keys.toMutableStateList())
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             for (contact in contacts) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Card(modifier = Modifier
