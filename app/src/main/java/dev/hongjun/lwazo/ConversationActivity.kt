@@ -108,7 +108,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
                         .fillMaxSize()
                         .padding(bottom =
                             if (previousMsg != null && previousMsg.sender == message.sender) {
-                                0.dp
+                                1.dp
                             } else {
                                 8.dp
                             }
@@ -222,7 +222,7 @@ fun ChatBubble(sms: SmsEntry) {
             },
             contentColor = MessageTextColor,
             shape = MaterialTheme.shapes.extraLarge,
-            shadowElevation = 3.dp,
+            shadowElevation = 0.dp,
         ) {
             Text(
                 text = sms.message,
@@ -237,7 +237,7 @@ fun ChatBubble(sms: SmsEntry) {
         if (sms.quoted != null) {
             val quoted = sms.quoted
             Surface(
-                modifier = Modifier.padding(top = 1.dp),
+                modifier = Modifier.padding(top = 0.dp),
                 color = if (messageIsMine(sms.quoted)) {
                     SelfMessageColor
                 } else {
@@ -245,7 +245,7 @@ fun ChatBubble(sms: SmsEntry) {
                 },
                 contentColor = QuotedTextColor,
                 shape = MaterialTheme.shapes.extraLarge,
-                shadowElevation = 1.dp,
+                shadowElevation = 0.dp,
             ) {
                 Text(
                     text = quoted.message,
