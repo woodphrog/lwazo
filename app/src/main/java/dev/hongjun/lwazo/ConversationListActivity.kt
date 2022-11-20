@@ -51,10 +51,10 @@ class ConversationListActivity : ComponentActivity() {
     @Composable
     fun registerMutableContactList(list: SnapshotStateList<String>): SnapshotStateList<String> {
         mutableContactList = list
-        var a:SnapshotStateList<String> = remember { mutableStateListOf<String>()}
-        a.clear()
-        a.addAll(list)
-        return a
+//        var a:SnapshotStateList<String> = remember { mutableStateListOf<String>()}
+//        a.clear()
+//        a.addAll(list)
+        return list
 
     }
     @Composable
@@ -73,11 +73,14 @@ class ConversationListActivity : ComponentActivity() {
                     Card(modifier = Modifier
                         .size(500.dp, 70.dp)
                         .clickable { navController.navigate("conversation/$contact") }
-                        .fillMaxWidth(), content = {
+                        .fillMaxWidth()) {
                         Text(text = contact, fontSize = 25.sp, modifier = Modifier.fillMaxWidth());
-                        val lastTextEntry = SmsManager.getSenderList()[contact]?.getSmsEntries()?.last();
-                        Text(text = lastTextEntry?.timestamp?.hour.toString() +":"+ lastTextEntry?.timestamp?.minute.toString() +"  "+ lastTextEntry?.message)
-                        })
+
+//                        val lastTextEntry =
+//                            SmsManager.getSenderList()[contact]?.getSmsEntries()?.last();
+//
+//                        Text(text = lastTextEntry?.timestamp?.hour.toString() +":"+ lastTextEntry?.timestamp?.minute.toString() +"  "+ lastTextEntry?.message)
+                    }
                 }
 
 
