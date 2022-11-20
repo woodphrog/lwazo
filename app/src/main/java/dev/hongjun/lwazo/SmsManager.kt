@@ -4,6 +4,13 @@ import android.telephony.SmsManager
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import java.util.UUID
 
+val dummySms: SmsEntry = SmsEntry(
+    null,
+    null,
+    message = "Le message ne peut pas être chargé",
+    id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+)
+
 class SmsConversation(val with: String) {
     private val smsEntries = mutableMapOf<UUID, SmsEntry>()
     private val smsEntriesSorted = sortedSetOf(
@@ -38,7 +45,7 @@ class SmsConversation(val with: String) {
         )
         smsEntriesSorted.forEach {
             val segments = it.message.split(SEPARATOR)
-            val sms = when (segments.size) {
+            var sms = when (segments.size) {
                 1 -> {
                     it
                 }
@@ -52,12 +59,15 @@ class SmsConversation(val with: String) {
                 else -> {
                     val quotedSegments = segments[2].split("a envoyé")
                     try {
-                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = lookupSmsEntry(UUID.fromString(quotedSegments[1].trim())))
+                        val quotedSms = lookupSmsEntry(UUID.fromString(quotedSegments[1].trim()))
+                            ?: throw IllegalArgumentException("Quoted SMS not found")
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = quotedSms)
                     } catch (e: Exception) {
-                        it
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = dummySms)
                     }
                 }
             }
+            sms = sms.copy(message = sms.message.trim())
             smsEntries[sms.id] = sms
             mutableStateList?.add(sms)
             newSortedList.add(sms)
