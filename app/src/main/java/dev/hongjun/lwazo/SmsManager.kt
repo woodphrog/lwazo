@@ -2,7 +2,6 @@ package dev.hongjun.lwazo
 
 import android.telephony.SmsManager
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import java.util.UUID
 
 class SmsConversation(val with: String) {
@@ -29,6 +28,42 @@ class SmsConversation(val with: String) {
 
     fun getSmsEntries(): List<SmsEntry> {
         return smsEntriesSorted.toList()
+    }
+
+    fun linkMessages() {
+        smsEntries.clear()
+        mutableStateList?.clear()
+        val newSortedList = sortedSetOf(
+            compareBy<SmsEntry> { it.timestamp }.thenBy { it.id }
+        )
+        smsEntriesSorted.forEach {
+            val segments = it.message.split(SEPARATOR)
+            val sms = when (segments.size) {
+                1 -> {
+                    it
+                }
+                2 -> {
+                    try {
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()))
+                    } catch (e: IllegalArgumentException) {
+                        it
+                    }
+                }
+                else -> {
+                    val quotedSegments = segments[2].split("a envoyé")
+                    try {
+                        it.copy(message = segments[0], id = UUID.fromString(segments[1].trim()), quoted = lookupSmsEntry(UUID.fromString(quotedSegments[1].trim())))
+                    } catch (e: Exception) {
+                        it
+                    }
+                }
+            }
+            smsEntries[sms.id] = sms
+            mutableStateList?.add(sms)
+            newSortedList.add(sms)
+        }
+        smsEntriesSorted.clear()
+        smsEntriesSorted.addAll(newSortedList)
     }
 }
 
@@ -72,7 +107,8 @@ object SmsManager {
             val quotedSegments = quotedSegment.split("a envoyé")
             val quotedId = UUID.fromString(quotedSegments[1].trim())
             val conversation = smsConversations.getOrPut(sender) { SmsConversation(sender) }
-            conversation.lookupSmsEntry(quotedId)
+            val quotedSms = conversation.lookupSmsEntry(quotedId)
+            quotedSms ?: throw IllegalArgumentException("Invalid transmission format: $transmissionFormat")
         } else {
             null
         }
@@ -81,5 +117,11 @@ object SmsManager {
 
     fun getOrCreateConversation(with: String): SmsConversation {
         return smsConversations.getOrPut(with) { SmsConversation(with) }
+    }
+
+    fun linkMessages() {
+        smsConversations.forEach {
+            it.value.linkMessages()
+        }
     }
 }

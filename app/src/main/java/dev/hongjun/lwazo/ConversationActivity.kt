@@ -238,7 +238,7 @@ fun ChatBubble(sms: SmsEntry) {
             val quoted = sms.quoted
             Surface(
                 modifier = Modifier.padding(top = 0.dp),
-                color = if (messageIsMine(sms.quoted)) {
+                color = if (messageIsMine(sms.quoted!!)) {
                     SelfMessageColor
                 } else {
                     OtherMessageColor
@@ -248,7 +248,7 @@ fun ChatBubble(sms: SmsEntry) {
                 shadowElevation = 0.dp,
             ) {
                 Text(
-                    text = quoted.message,
+                    text = quoted!!.message,
                     modifier = Modifier.padding(8.dp),
                     style = TextStyle(
                         fontSize = 16.sp,

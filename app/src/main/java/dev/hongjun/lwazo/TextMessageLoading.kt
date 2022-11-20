@@ -4,7 +4,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.provider.Telephony
 import java.lang.Long
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Date
 
@@ -65,6 +64,6 @@ fun loadTextMessages(context: Context) {
             }
         }
         c.close()
+        SmsManager.linkMessages()
     }
-    c?.close()
 }
