@@ -24,11 +24,6 @@
         android:theme="@style/Theme.LoiseauBleu"
         tools:targetApi="31">
         <activity
-            android:name=".ConversationActivity"
-            android:exported="false"
-            android:label="@string/title_activity_conversation"
-            android:theme="@style/Theme.LoiseauBleu" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +62,9 @@ class ConversationListActivity : ComponentActivity() {
         })
         contacts.clear()
         contacts.addAll(SmsManager.getSenderList().keys.toMutableStateList())
-        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())) {
             for (contact in contacts) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Card(modifier = Modifier
@@ -111,9 +121,28 @@ class ConversationListActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "conversation_list") {
                         composable("conversation_list") {
-                            Column() {
-                                MessagesListTopBar(navController, title = "Messages")
+                            Scaffold(
+                                topBar = {
+                                    MessagesListTopBar(navController, title = "Messages")
+                                }
+                            ) {
+                                println(it)
                                 ContactList(navController = navController)
+                                Box(
+                                ) {
+                                    //FloatingActionButton(
+                                    //    modifier = Modifier
+                                    //        .padding(all = 20.dp),
+                                    //    onClick = {
+                                    //        navController.navigate("new_conversation")
+                                    //    },
+                                    //) {
+                                    //    Icon(
+                                    //        imageVector = Icons.Filled.Add,
+                                    //        contentDescription = "Démarrer une conversation",
+                                    //    )
+                                    //}
+                                }
                             }
                         }
                         composable("conversation/{destinationNumber}") {
@@ -140,9 +169,7 @@ fun MessagesListTopBar(navController: NavController, title: String) {
                     )
                 )
             },
-
-            backgroundColor = Color.White
+            backgroundColor = Color.White,
         )
-
     }
 }

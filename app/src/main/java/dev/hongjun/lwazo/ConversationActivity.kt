@@ -89,7 +89,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
                         IconButton(onClick = { navController.navigateUp() }) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = "Revenir à la liste des conversations"
                             )
                         }
                     }
