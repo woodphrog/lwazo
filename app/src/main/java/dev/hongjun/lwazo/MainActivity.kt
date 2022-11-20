@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,8 +20,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
-import dev.hongjun.lwazo.SmsManager.replyToSms
 import dev.hongjun.lwazo.databinding.ActivityMainBinding
+import java.lang.System.exit
 
 class MainActivity : AppCompatActivity() {
 
@@ -105,7 +106,16 @@ class MainActivity : AppCompatActivity() {
             ensurePermissions()
             return
         }
-        PhoneNumberManager.myPhoneNumber = subscriptionManager.getPhoneNumber(1)
+        val value = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            PhoneNumberManager.myPhoneNumber = subscriptionManager.getPhoneNumber(1)
+        }
+        else{
+            Log.d("COMPOSE", "HELP")
+            PhoneNumberManager.myPhoneNumber = value.line1Number
+        }
         Log.d("PhoneNumber", PhoneNumberManager.myPhoneNumber)
         SmsReceptionManager.addSmsReceptionListener(onSmsReceivedRef)
     }
