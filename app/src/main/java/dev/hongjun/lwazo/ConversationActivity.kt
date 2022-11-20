@@ -227,10 +227,16 @@ fun ChatBubble(sms: SmsEntry) {
         if (sms.quoted != null) {
             Text(
                 modifier = Modifier.padding(end = 6.dp, bottom = 2.dp),
-                text = if (messageIsMine(sms)) {
+                text = if (messageIsMine(sms) && !messageIsMine(sms.quoted!!) || messageIsMine(sms) && sms.quoted == dummySms) {
                     "Vous avez répondu"
-                } else {
+                } else if (!messageIsMine(sms) && sms.quoted == dummySms) {
+                    "A envoyé une réponse"
+                } else if (!messageIsMine(sms) && messageIsMine(sms.quoted!!)) {
                     "Vous a répondu"
+                } else if (messageIsMine(sms) && messageIsMine(sms.quoted!!)) {
+                    "Réponse à vous-même"
+                } else {
+                    "Réponse à soi-même"
                 },
                 style = TextStyle(
                     fontStyle = FontStyle.Italic,
