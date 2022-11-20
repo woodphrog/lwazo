@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package dev.hongjun.lwazo
 
 import android.app.Activity
@@ -32,10 +34,12 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +75,9 @@ fun Conversation(navController: NavController, destinationNumber: String) {
     val messages = conversation.registerMutableStateList(remember {
         conversation.getSmsEntries().toMutableStateList()
     })
+    val messageToReply = remember {
+        mutableStateOf<SmsEntry?>(null)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,7 +106,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
             )
         },
         bottomBar = {
-            MessageInput(conversation)
+            MessageInput(conversation, messageToReply)
         }
     ) {
         println(it)
@@ -129,7 +136,7 @@ fun Conversation(navController: NavController, destinationNumber: String) {
                         Arrangement.Start
                     }
                 ) {
-                    ChatBubble(message)
+                    ChatBubble(message, messageToReply)
                 }
                 previousMsg = message
             }
@@ -142,13 +149,19 @@ fun messageIsMine(message: SmsEntry): Boolean {
 }
 
 @Composable
-fun MessageInput(conversation: SmsConversation) {
+fun MessageInput(conversation: SmsConversation, messageToReply: MutableState<SmsEntry?>) {
     var inputValue by remember { mutableStateOf("") }
 
     fun sendMessage() {
-        val sms = SmsEntry(PhoneNumberManager.myPhoneNumber, conversation.with, inputValue)
-        SmsManager.sendSms(sms)
-        conversation.addSmsEntry(sms)
+        if (messageToReply.value != null) {
+            SmsManager.replyToSms(messageToReply.value!!, inputValue)
+            messageToReply.value = null
+        } else {
+            val sms = SmsEntry(PhoneNumberManager.myPhoneNumber, conversation.with, inputValue)
+            SmsManager.sendSms(sms)
+            conversation.addSmsEntry(sms)
+        }
+
         inputValue = ""
     }
 
@@ -216,7 +229,7 @@ fun MessageInput(conversation: SmsConversation) {
 }
 
 @Composable
-fun ChatBubble(sms: SmsEntry) {
+fun ChatBubble(sms: SmsEntry, messageToReply: MutableState<SmsEntry?>) {
     Column(
         horizontalAlignment = if (messageIsMine(sms)) {
             androidx.compose.ui.Alignment.End
@@ -255,6 +268,10 @@ fun ChatBubble(sms: SmsEntry) {
             contentColor = MessageTextColor,
             shape = MaterialTheme.shapes.extraLarge,
             shadowElevation = 0.dp,
+            onClick = {
+                // reply
+                messageToReply.value = sms
+            },
         ) {
             Text(
                 text = sms.message,
@@ -263,7 +280,7 @@ fun ChatBubble(sms: SmsEntry) {
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Normal
-                )
+                ),
             )
         }
         if (sms.quoted != null) {
